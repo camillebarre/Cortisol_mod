@@ -2,15 +2,21 @@ package net.tech.testmod.event;
 
 import com.google.common.eventbus.Subscribe;
 import net.minecraft.advancements.critereon.EntityHurtPlayerTrigger;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -56,28 +62,65 @@ public class ModEvents {
     }
 
 
-//    @SubscribeEvent
-//    public static void onPlayerTick(TickEvent.PlayerTickEvent event){
-//
-//        if (event.side== LogicalSide.SERVER){
-//            event.player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol-> {
-//                if (cortisol.getCortisol()<100 && event.player.getRandom().nextFloat()<0.005f) {
-//                    cortisol.addCortisol(1);
-//                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()),(ServerPlayer) event.player);
-//
-//                }
-//
-//            });
-//        }
-//    }
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
+        if (event.side == LogicalSide.SERVER) {
+
+            ServerPlayer player = (ServerPlayer) event.player ;
+            net.minecraft.world.level.Level level = player.level();
+            if (player.tickCount % 10 != 0) return;
+            BlockPos playerPos = player.blockPosition();
+
+            for (BlockPos pos : BlockPos.betweenClosed(
+                    playerPos.offset(-5, -2, -5),
+                    playerPos.offset(5, 2, 5))) {
+
+                if (level.getBlockState(pos).getBlock() == Blocks.CAMPFIRE) {
+
+                    player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                        if (cortisol.getCortisol() > 0) {
+                            cortisol.subCortisol(1);
+                            ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
+
+                        }
+                    });
+
+                    break;
+                }
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onPlayerEat(LivingEntityUseItemEvent.Finish event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (event.getItem().isEdible()) {
+                event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                    if (cortisol.getCortisol() > 0) {
+                        cortisol.subCortisol(2);
+                        ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
+
+                    }
+                });
+            }
+        }
+    }
+
+
+
+    //Add cortisol
+
+
 
     @SubscribeEvent
     public static  void onPlayerAttack(AttackEntityEvent event){
-        if (event.getEntity() instanceof ServerPlayer){
+        if (event.getEntity() instanceof ServerPlayer player){
             event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol-> {
                 if (cortisol.getCortisol()<100) {
                     cortisol.addCortisol(1);
-                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()),(ServerPlayer) event.getEntity());
+                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()),player);
 
                 }
 
@@ -88,11 +131,11 @@ public class ModEvents {
 
     @SubscribeEvent
     public static  void onPlayerDamage(LivingHurtEvent event) {
-        if (event.getEntity() instanceof ServerPlayer) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 if (cortisol.getCortisol() < 100) {
                     cortisol.addCortisol(1);
-                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), (ServerPlayer) event.getEntity());
+                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
 
                 }
 
