@@ -24,5 +24,7 @@
   "block.testmod.sapphire_door": "Sapphire Door",
   "block.testmod.sapphire_pressure_plate": "Sapphire Pressure Plate",
   "block.testmod.sapphire_trapdoor": "Sapphire Trapdoor",
-  "block.testmod.sapphire_button": "Sapphire Button"
+  "block.testmod.sapphire_button": "Sapphire Button",
+
+  "death.attack.cortisol": "%1$s is dead due to CORTISOOOOL damage !"
 }

@@ -1,52 +1,49 @@
 package net.tech.testmod.event;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tech.testmod.TestMod;
 import net.tech.testmod.client.ClientCortisolData;
 import net.tech.testmod.client.CortisolHudOverlay;
-import net.tech.testmod.cortisol.PlayerCortisol;
 import net.tech.testmod.cortisol.PlayerCortisolProvider;
 
 public class ClientEvents {
-    @Mod.EventBusSubscriber(modid= TestMod.MOD_ID,value = Dist.CLIENT,bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class ClientModBusEvents{
+    @Mod.EventBusSubscriber(modid = TestMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ClientModBusEvents {
         @SubscribeEvent
-        public static void registerGuiOverlays(RegisterGuiOverlaysEvent event){
+        public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
             event.registerAboveAll("cortisol", CortisolHudOverlay.HUD_CORTISOL);
-            }
-
         }
-    @Mod.EventBusSubscriber(modid= TestMod.MOD_ID,value = Dist.CLIENT,bus = Mod.EventBusSubscriber.Bus.FORGE)
+    }
+
+    @Mod.EventBusSubscriber(modid = TestMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class cameraShake {
 
         @SubscribeEvent
-        public static void screenShaking(ViewportEvent.ComputeCameraAngles event){
+        public static void screenShaking(ViewportEvent.ComputeCameraAngles event) {
             Minecraft mc = Minecraft.getInstance();
             Player player = mc.player;
-            if (player == null){ return;}
-            player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(data->{
-                int cortisol= ClientCortisolData.getPlayerCortisol();
-                if (cortisol>80){
-                    float intensity =(float)(cortisol-80)/20;
+            if (player == null) {
+                return;
+            }
 
-                    float shakeX = (float)(Math.random() - 0.5) * intensity;
-                    float shakeY = (float)(Math.random() - 0.5) * intensity;
+            player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(data -> {
+                int cortisol = ClientCortisolData.getPlayerCortisol();
+                if (cortisol > 80) {
+                    float intensity = (float) (cortisol - 80) / 20;
 
-                    event.setPitch(event.getPitch()+shakeX);
-                    event.setYaw(event.getYaw()+shakeY);
+                    float shakeX = (float) (Math.random() - 0.5) * intensity;
+                    float shakeY = (float) (Math.random() - 0.5) * intensity;
 
-
+                    event.setPitch(event.getPitch() + shakeX);
+                    event.setYaw(event.getYaw() + shakeY);
                 }
             });
         }
     }
-
 }
