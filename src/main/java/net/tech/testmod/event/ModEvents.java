@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +40,7 @@ import net.tech.testmod.networking.ModMessages;
 import net.tech.testmod.networking.packet.CortisolSyncS2CPacket;
 import net.tech.testmod.util.ModDamageTypes;
 import org.apache.logging.log4j.core.jmx.Server;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.InputEvent;
 import java.util.UUID;
@@ -154,7 +156,8 @@ public class ModEvents {
                         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                     }
                 }
-
+                // speed
+                // increase if above 70 cortisol
                 var attr = player.getAttribute(Attributes.MOVEMENT_SPEED);
                 if (attr == null) return;
 
@@ -189,7 +192,7 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerAttack(AttackEntityEvent event){
+    public static  void onPlayerAttack(@NotNull AttackEntityEvent event){
         if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Monster){
             event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
