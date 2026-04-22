@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
@@ -35,6 +36,7 @@ import net.tech.testmod.cortisol.PlayerCortisolProvider;
 import net.tech.testmod.networking.ModMessages;
 import net.tech.testmod.networking.packet.CortisolSyncS2CPacket;
 import org.apache.logging.log4j.core.jmx.Server;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.InputEvent;
 import java.util.UUID;
@@ -75,34 +77,48 @@ public class ModEvents {
             ServerPlayer player = (ServerPlayer) event.player ;
             net.minecraft.world.level.Level level = player.level();
 
-            if (player.tickCount % 10 != 0) return;
             BlockPos playerPos = player.blockPosition();
 
 
             //cortisol decrease when near campfire (low low cortisol)
-            for (BlockPos pos : BlockPos.betweenClosed(
-                    playerPos.offset(-5, -2, -5),
-                    playerPos.offset(5, 2, 5))) {
+            if (player.tickCount%10==0) {
+                for (BlockPos pos : BlockPos.betweenClosed(
+                        playerPos.offset(-5, -2, -5),
+                        playerPos.offset(5, 2, 5))) {
 
-                if (level.getBlockState(pos).getBlock() == Blocks.CAMPFIRE) {
+                    if (level.getBlockState(pos).getBlock() == Blocks.CAMPFIRE) {
 
-                    player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
-                        if (cortisol.getCortisol() > 0) {
-                            cortisol.subCortisol(1);
-                            ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
+                        player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                            if (cortisol.getCortisol() > 0) {
+                                cortisol.subCortisol(1);
 
-                        }
-                    });
 
-                    break;
+                            }
+                        });
+
+                        break;
+                    }
                 }
             }
 
+            //increase cortisol if creeper nearby
+
+            for (Entity entity : level.getEntities(player,player.getBoundingBox().inflate(8))){
+
+                    player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                        if (cortisol.getCortisol() < 75) {
+                            if (entity instanceof Creeper && player.tickCount%20==0) {
+                                cortisol.addCortisol(1);
+
+                            }
+                        }
+                    });
 
 
+            }
             player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
 
-                //randomly drop item when above 80 cortisol
+                  //randomly drop item when above 80 cortisol
                 if (cortisol.getCortisol() > 80 &&
                         player.getRandom().nextFloat() < 0.001f) {
 
@@ -113,7 +129,8 @@ public class ModEvents {
                         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                     }
                 }
-                // speed increase if above 70 cortisol
+                // speed
+                // increase if above 70 cortisol
                 var attr = player.getAttribute(Attributes.MOVEMENT_SPEED);
                 if (attr == null) return;
 
@@ -129,6 +146,8 @@ public class ModEvents {
                     attr.addTransientModifier(modifier);
 
                 }
+
+                ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
 
             });
 
@@ -158,7 +177,7 @@ public class ModEvents {
     //Add cortisol
 
     @SubscribeEvent
-    public static  void onPlayerAttack(AttackEntityEvent event){
+    public static  void onPlayerAttack(@NotNull AttackEntityEvent event){
         if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Monster){
             event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol-> {
                 if (cortisol.getCortisol()<100) {
