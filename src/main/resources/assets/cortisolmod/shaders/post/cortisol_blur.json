@@ -8,7 +8,7 @@
       "uniforms": [
         {
         "name": "RADIUS",
-          "values":[]
+          "values":[0.3]
         }
       ]
     },

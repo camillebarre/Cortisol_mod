@@ -2,10 +2,7 @@ package net.tech.cortisolmod.event;
 
 import com.mojang.blaze3d.shaders.Uniform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EffectInstance;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.PostChain;
-import net.minecraft.client.renderer.PostPass;
+import net.minecraft.client.renderer.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,6 +16,7 @@ import net.tech.cortisolmod.client.ClientCortisolData;
 import net.tech.cortisolmod.client.CortisolHudOverlay;
 import net.tech.cortisolmod.cortisol.PlayerCortisol;
 import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
+import net.tech.cortisolmod.mixin.PostChainAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -45,11 +43,6 @@ public class ClientEvents {
         private static final float MAX_BREATHING_INTENSITY = 0.05f;
         private static final int SCREEN_SHAKING_START_CORTISOL = 80;
 
-        @Mixin(PostChain.class)
-        public interface PostChainAccessor {
-            @Accessor("passes")
-            List<PostPass> getPasses();
-        }
 
         @SubscribeEvent
         public static void onFovCompute(ViewportEvent.ComputeFov event) {
@@ -103,31 +96,58 @@ public class ClientEvents {
                 }
             });
         }
+
         @SubscribeEvent
-        public static void cameraBlur(TickEvent.ClientTickEvent event){
+        public static void cameraBlur(net.minecraftforge.event.TickEvent.RenderTickEvent event){
             Minecraft mc = Minecraft.getInstance();
+            //ShaderInstance shader = mc.gameRenderer.getShader("cortisol_blur");
+            Player player = mc.player;
+
+
 
             if (mc.gameRenderer.currentEffect() ==null) {
                 ResourceLocation blur = new ResourceLocation(CortisolMod.MOD_ID, "shaders/post/cortisol_blur.json");
                 mc.gameRenderer.loadEffect(blur);
             }
+//            if (shader == null){
+//                System.out.println("gugugaga");
+//            }
 
-            PostChain chain = mc.getInstance().gameRenderer.currentEffect();
+            PostChain chain = mc.gameRenderer.currentEffect();
+            if (chain == null) return;
 
-            if (chain!=null){
-                List<PostPass> passes = ((PostChainAccessor) chain).getPasses();
-                for (PostPass pass : passes){
-                    EffectInstance effect = pass.getEffect();
-                    Player player = mc.player;
-                    Uniform u = effect.getUniform("RADIUS");
-                    if (u != null && player!=null) {
-                        player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(data->{
-                            u.set(min(max((data.getCortisol()-0.75f*PlayerCortisol.REAL_MAX_CORTISOL)/(0.25f*PlayerCortisol.REAL_MAX_CORTISOL),0),1 )*0.4f );
-                        });
-                    }
+
+            if ((!(chain instanceof PostChainAccessor accessor))) {
+                return;
+            }
+
+
+
+            List<PostPass> passes = accessor.getPasses();
+
+            for (PostPass pass : passes) {
+                EffectInstance effect = pass.getEffect();
+                Uniform u = effect.getUniform("RADIUS");
+
+                if (u != null) {
+
+
+                    float currentCortisol = ClientCortisolData.getPlayerCortisol();
+                    float value = min(max(
+                            (currentCortisol - 0.75f * PlayerCortisol.REAL_MAX_CORTISOL)
+                                    / (0.25f * PlayerCortisol.REAL_MAX_CORTISOL),
+                            0), 1) * 0.4f;
+
+                    u.set(value);
+
                 }
             }
+
+
+
         }
 
     }
+
 }
+
