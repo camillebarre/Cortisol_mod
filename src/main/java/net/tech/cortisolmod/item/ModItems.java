@@ -12,7 +12,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS=
             DeferredRegister.create(ForgeRegistries.ITEMS, CortisolMod.MOD_ID);
 
-            public static final RegistryObject<Item> PHONE=ITEMS.register("phone",()->new ScrollingPhoneItem(new Item.Properties()));
+            public static final RegistryObject<Item> SCROLLING_PHONE=ITEMS.register("scrolling_phone",()->new ScrollingPhoneItem(new Item.Properties().stacksTo(1)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
