@@ -2,6 +2,7 @@ package net.tech.cortisolmod.event;
 
 import com.mojang.blaze3d.shaders.Uniform;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tech.cortisolmod.CortisolMod;
@@ -96,25 +98,21 @@ public class ClientEvents {
                 }
             });
         }
-
         @SubscribeEvent
-        public static void cameraBlur(net.minecraftforge.event.TickEvent.RenderTickEvent event){
+        public static void onLevelLoad(LevelEvent.Load event) {
+            if (!(event.getLevel() instanceof ClientLevel)) return;
+
             Minecraft mc = Minecraft.getInstance();
-            //ShaderInstance shader = mc.gameRenderer.getShader("cortisol_blur");
-            Player player = mc.player;
 
-
-
-            if (mc.gameRenderer.currentEffect() ==null) {
+            if (mc.gameRenderer.currentEffect() == null) {
                 ResourceLocation blur = new ResourceLocation(CortisolMod.MOD_ID, "shaders/post/cortisol_blur.json");
                 mc.gameRenderer.loadEffect(blur);
             }
-//            if (shader == null){
-//                System.out.println("gugugaga");
-//            }
-
+        }
+        @SubscribeEvent
+        public static void cameraBlur(net.minecraftforge.event.TickEvent.RenderTickEvent event){
+            Minecraft mc = Minecraft.getInstance();
             PostChain chain = mc.gameRenderer.currentEffect();
-            if (chain == null) return;
 
 
             if ((!(chain instanceof PostChainAccessor accessor))) {
