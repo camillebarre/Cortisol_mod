@@ -1,9 +1,5 @@
 package net.tech.cortisolmod.client.cinematic;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.sounds.SoundEvents;
-
 /**
  * Gère l'animation de clignement.
  *
@@ -200,11 +196,7 @@ public class BlinkCinematic {
         animateTo(1.0f);
         playSequence(CinematicConfig.buildSequenceArray());
 
-        Minecraft.getInstance().execute(() -> {
-            Minecraft.getInstance().getSoundManager().play(
-                    SimpleSoundInstance.forMusic(SoundEvents.MUSIC_DISC_OTHERSIDE)
-            );
-        });
+        MusicBlocker.playCustomMusic();
 
         CinematicConfig.LogoConfig logo = CinematicConfig.getLogo();
         Thread t = new Thread(() -> {
