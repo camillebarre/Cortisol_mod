@@ -17,6 +17,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.tech.cortisolmod.CortisolMod;
 import net.tech.cortisolmod.client.ClientCortisolData;
 import net.tech.cortisolmod.client.CortisolHudOverlay;
@@ -217,6 +218,20 @@ public class ClientEvents {
 
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            ItemProperties.register(ModItems.SCROLLING_PHONE.get(),
+                    new ResourceLocation("cortisolmod", "activated"),
+                    (stack, level, entity, seed) -> {
+                        if (stack.hasTag() && stack.getTag().getBoolean("activated")) {
+                            return 1.0F;
+                        }
+                        return 0.0F;
+                    });
+        });
     }
 
 }

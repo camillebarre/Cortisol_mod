@@ -1,5 +1,6 @@
 package net.tech.cortisolmod.item.custom;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,8 +22,17 @@ public class ScrollingPhoneItem extends Item {
     }
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+        ItemStack stack = pPlayer.getItemInHand(pHand);
+
+        if (!pLevel.isClientSide) {
+
+            CompoundTag nbt = stack.getOrCreateTag();
+
+            boolean currentState = nbt.getBoolean("activated");
+            nbt.putBoolean("activated", !currentState);
 
 
+        }
 
         pPlayer.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol->{
             if (cortisol.getCortisol()>0) {
@@ -35,11 +45,8 @@ public class ScrollingPhoneItem extends Item {
         return InteractionResultHolder.fail(pPlayer.getItemInHand(pHand));
 
     }
-    @Override
-    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity) {
 
-        return pStack;
-    }
+
 
     @Override
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {

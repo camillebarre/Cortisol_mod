@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "cortisolmod:item/scrolling_phone"
+  }
+}
