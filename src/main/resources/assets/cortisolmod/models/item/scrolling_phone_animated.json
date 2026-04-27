@@ -1,18 +1,11 @@
 {
-	"format_version": "1.21.11",
+	"format_version": "1.20.4",
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "cortisolmod:item/scrolling_phone_3d",
-		"particle": "cortisolmod:item/scrolling_phone_3d"
+		"1": "cortisolmod:item/scrolling_phone_animated",
+		"particle": "cortisolmod:item/scrolling_phone_animated"
 	},
-	"overrides": [
-		{
-			"predicate": { "cortisolmod:activated": 0 },
-			"1": "cortisolmod:item/scrolling_phone",
-			"particle": "cortisolmod:item/scrolling_phone"
-		}
-	],
 	"elements": [
 		{
 			"from": [2, 0, 5],

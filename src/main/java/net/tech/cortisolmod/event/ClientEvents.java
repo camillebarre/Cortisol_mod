@@ -30,6 +30,7 @@ import net.tech.cortisolmod.cortisol.PlayerCortisol;
 import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.item.ModItems;
 import net.tech.cortisolmod.item.custom.CortisolSwordItem;
+import net.tech.cortisolmod.item.custom.ScrollingPhoneItem;
 import net.tech.cortisolmod.mixin.PostChainAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

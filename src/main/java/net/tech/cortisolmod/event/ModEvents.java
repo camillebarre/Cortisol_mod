@@ -197,14 +197,23 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static  void onPlayerAttack(@NotNull AttackEntityEvent event){
-        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Monster){
-            event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
-                if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
-                    cortisol.addCortisol(ATTACK_INCREASE_AMOUNT);
-                    ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
-                }
-            });
+    public static void onLivingHurt(LivingHurtEvent event) {
+
+        if (event.getSource().getEntity() instanceof ServerPlayer player && event.getEntity() instanceof Monster) {
+
+
+            if (event.getAmount() > 0) {
+
+                player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                    if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
+
+                        cortisol.addCortisol(ATTACK_INCREASE_AMOUNT);
+
+
+                        ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
+                    }
+                });
+            }
         }
     }
 

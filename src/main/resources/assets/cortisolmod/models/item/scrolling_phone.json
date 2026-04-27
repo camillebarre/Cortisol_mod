@@ -1,14 +1,9 @@
 {
-  "parent": "minecraft:item/handheld",
-  "loader": "forge:separate_transforms",
-  "base": {
-    "parent": "cortisolmod:item/scrolling_phone_3d"
-
-  },
-  "perspectives": {
-    "gui":{"parent": "cortisolmod:item/scrolling_phone_2d"
+  "parent": "cortisolmod:item/scrolling_phone_0",
+  "overrides": [
+    {
+      "predicate": { "cortisolmod:activated": 1 },
+      "model": "cortisolmod:item/scrolling_phone_animated"
     }
-  }
-
-
+  ]
 }

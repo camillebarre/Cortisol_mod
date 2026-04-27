@@ -64,9 +64,9 @@ public class ClientSetup {
             });
             event.enqueueWork(() -> {
                 ItemProperties.register(ModItems.SCROLLING_PHONE.get(),
-                        new ResourceLocation("cortisolmod", "activated"),
+                        new ResourceLocation("cortisolmod", ScrollingPhoneItem.ANIMATION_TAG),
                         (stack, level, entity, seed) -> {
-                            if (stack.hasTag() && stack.getTag().getBoolean("activated")) {
+                            if (stack.hasTag() && stack.getTag().getBoolean(ScrollingPhoneItem.ANIMATION_TAG)) {
                                 return 1.0F;
                             }
                             return 0.0F;
