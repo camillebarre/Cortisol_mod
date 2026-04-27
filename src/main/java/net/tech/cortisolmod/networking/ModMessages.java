@@ -9,6 +9,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.tech.cortisolmod.CortisolMod;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
 import net.tech.cortisolmod.networking.packet.ExampleC2SPacket;
+import net.tech.cortisolmod.networking.packet.StartIntroCinematicS2CPacket;
 
 public class ModMessages {
     private static SimpleChannel INSTANCE;
@@ -36,7 +37,11 @@ public class ModMessages {
                 .encoder(CortisolSyncS2CPacket::toBytes)
                 .consumerMainThread(CortisolSyncS2CPacket::handle)
                 .add();
-
+        net.messageBuilder(StartIntroCinematicS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(StartIntroCinematicS2CPacket::new)
+                .encoder(StartIntroCinematicS2CPacket::toBytes)
+                .consumerMainThread(StartIntroCinematicS2CPacket::handle)
+                .add();
     }
 
     public static <MSG> void sendToServer(MSG message){

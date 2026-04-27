@@ -1,6 +1,7 @@
 package net.tech.cortisolmod.event;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +33,7 @@ import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.item.custom.CortisolSwordItem;
 import net.tech.cortisolmod.networking.ModMessages;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
+import net.tech.cortisolmod.networking.packet.StartIntroCinematicS2CPacket;
 import net.tech.cortisolmod.util.ModDamageTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -233,6 +235,26 @@ public class ModEvents {
                     ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), player);
                 });
             }
+        }
+    }
+
+
+    private static final String INTRO_TAG = "intro_played";
+    // Start intro cutscene only if it is the first time the player logs in this world
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        CompoundTag persistentData = player.getPersistentData();
+        CompoundTag forgeData = persistentData.getCompound(ServerPlayer.PERSISTED_NBT_TAG);
+
+        if (!forgeData.getBoolean(INTRO_TAG)) {
+            // On retient le fait que le joueur l'a joué
+            forgeData.putBoolean(INTRO_TAG, true);
+            persistentData.put(ServerPlayer.PERSISTED_NBT_TAG, forgeData);
+
+            // On lance la cinématique
+            ModMessages.sendToPlayer(new StartIntroCinematicS2CPacket(), player);
         }
     }
 }

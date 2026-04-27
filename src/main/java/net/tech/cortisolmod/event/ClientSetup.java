@@ -1,5 +1,7 @@
 package net.tech.cortisolmod.event;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -7,6 +9,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -17,9 +20,18 @@ import net.tech.cortisolmod.client.EyesHudOverlay;
 import net.tech.cortisolmod.client.cinematic.CinematicConfig;
 import net.tech.cortisolmod.item.ModItems;
 import net.tech.cortisolmod.item.custom.CortisolSwordItem;
-import net.tech.cortisolmod.item.custom.ScrollingPhoneItem;
 
 public class ClientSetup {
+
+    public static void loadBlurShader(){
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.gameRenderer.currentEffect() == null) {
+            ResourceLocation blur = new ResourceLocation(CortisolMod.MOD_ID, "shaders/post/cortisol_blur.json");
+            mc.gameRenderer.loadEffect(blur);
+        }
+    }
+
     @Mod.EventBusSubscriber(modid = CortisolMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
         @SubscribeEvent
@@ -60,8 +72,16 @@ public class ClientSetup {
                             return 0.0F;
                         });
             });
+
         }
 
 
+    }
+
+    @SubscribeEvent
+    public static void onLevelLoad(LevelEvent.Load event) {
+        if (!(event.getLevel() instanceof ClientLevel)) return;
+
+        loadBlurShader();
     }
 }

@@ -191,4 +191,23 @@ public class BlinkCinematic {
 
         return 1f; // pleinement visible entre les deux fades
     }
+
+    public static void playCinematic() {
+        animateTo(1.0f);
+        playSequence(CinematicConfig.buildSequenceArray());
+
+        MusicBlocker.playCustomMusic();
+
+        CinematicConfig.LogoConfig logo = CinematicConfig.getLogo();
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(logo.appearMs());
+                showLogo();
+                Thread.sleep(logo.fadeOutMs() - logo.appearMs());
+                startLogoFadeOut();
+            } catch (InterruptedException ignored) {}
+        });
+        t.setDaemon(true);
+        t.start();
+    }
 }

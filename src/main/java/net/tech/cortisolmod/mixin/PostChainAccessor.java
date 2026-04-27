@@ -9,8 +9,7 @@ import java.util.List;
 
 @Mixin(PostChain.class)
 public interface PostChainAccessor {
-
-    @Accessor("passes")
+    @Accessor(value = "passes",remap = true)
     List<PostPass> getPasses();
 
 }

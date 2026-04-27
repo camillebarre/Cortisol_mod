@@ -1,6 +1,8 @@
 package net.tech.cortisolmod.event;
 
 import com.mojang.blaze3d.shaders.Uniform;
+import net.minecraft.client.Camera;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
@@ -46,13 +48,15 @@ public class ClientEvents {
 
 
     @Mod.EventBusSubscriber(modid = CortisolMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public static class cameraShake {
+    public static class cameraEffects {
         private static final int BREATHING_START_CORTISOL = 90;
         private static final float BASE_BREATHING_SPEED = 1.5f;
         private static final float MAX_BREATHING_SPEED = 3.5f;
         private static final float BASE_BREATHING_INTENSITY = 0.005f;
         private static final float MAX_BREATHING_INTENSITY = 0.05f;
         private static final int SCREEN_SHAKING_START_CORTISOL = 80;
+        private static CameraType lastCameraType = null;
+
 
 
         @SubscribeEvent
@@ -107,40 +111,23 @@ public class ClientEvents {
                 }
             });
         }
-        @SubscribeEvent
-        public static void onLevelLoad(LevelEvent.Load event) {
-            if (!(event.getLevel() instanceof ClientLevel)) return;
 
+
+        @SubscribeEvent
+        public static void checkCameraPerson(TickEvent.ClientTickEvent event){
             Minecraft mc = Minecraft.getInstance();
+            if (mc.player==null)return;
+            CameraType current = mc.options.getCameraType();
 
-            if (mc.gameRenderer.currentEffect() == null) {
-                ResourceLocation blur = new ResourceLocation(CortisolMod.MOD_ID, "shaders/post/cortisol_blur.json");
-                mc.gameRenderer.loadEffect(blur);
+            if (lastCameraType!=current){
+
+                if (current.isFirstPerson()){
+                    ClientSetup.loadBlurShader();
+                }
+
+                lastCameraType=current;
             }
-        }
 
-        @SubscribeEvent
-        public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-            BlinkCinematic.animateTo(1.0f);
-            BlinkCinematic.playSequence(CinematicConfig.buildSequenceArray());
-
-            Minecraft.getInstance().execute(() -> {
-                Minecraft.getInstance().getSoundManager().play(
-                        SimpleSoundInstance.forMusic(SoundEvents.MUSIC_DISC_OTHERSIDE)
-                );
-            });
-
-            CinematicConfig.LogoConfig logo = CinematicConfig.getLogo();
-            Thread t = new Thread(() -> {
-                try {
-                    Thread.sleep(logo.appearMs());
-                    BlinkCinematic.showLogo();
-                    Thread.sleep(logo.fadeOutMs() - logo.appearMs());
-                    BlinkCinematic.startLogoFadeOut();
-                } catch (InterruptedException ignored) {}
-            });
-            t.setDaemon(true);
-            t.start();
         }
 
         @SubscribeEvent
@@ -162,7 +149,6 @@ public class ClientEvents {
                 return;
             }
 
-
             List<PostPass> passes = accessor.getPasses();
 
             for (PostPass pass : passes) {
@@ -182,9 +168,6 @@ public class ClientEvents {
 
                 }
             }
-
-
-
         }
 
     }
