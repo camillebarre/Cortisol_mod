@@ -20,6 +20,7 @@ import net.tech.cortisolmod.client.EyesHudOverlay;
 import net.tech.cortisolmod.client.cinematic.CinematicConfig;
 import net.tech.cortisolmod.item.ModItems;
 import net.tech.cortisolmod.item.custom.CortisolSwordItem;
+import net.tech.cortisolmod.item.custom.ScrollingPhoneItem;
 
 public class ClientSetup {
 
