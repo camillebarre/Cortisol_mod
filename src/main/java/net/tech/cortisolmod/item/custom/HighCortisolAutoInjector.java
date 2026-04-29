@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.EnderpearlItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -12,13 +11,13 @@ import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.networking.ModMessages;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
 
-public class CortisolSeringe extends Item {
+public class CortisolAutoInjector extends Item {
 
     private final int cooldown;
     private final float cortisol_add_sub;
 
 
-    public CortisolSeringe(Properties pProperties,int cooldown,float cortisol_add_sub) {
+    public CortisolAutoInjector(Properties pProperties, int cooldown, float cortisol_add_sub) {
         super(pProperties);
         this.cooldown = cooldown;
         this.cortisol_add_sub=cortisol_add_sub;
