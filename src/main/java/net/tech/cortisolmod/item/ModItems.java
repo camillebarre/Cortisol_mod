@@ -17,7 +17,9 @@ public class ModItems {
     public static final RegistryObject<Item> CORTISOL_SWORD = ITEMS.register("cortisol_sword",
             () -> new CortisolSwordItem(new Item.Properties())
     );
-    public static final RegistryObject<Item> SCROLLING_PHONE=ITEMS.register("scrolling_phone",()->new ScrollingPhoneItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SCROLLING_PHONE=ITEMS.register("scrolling_phone",
+            ()->new ScrollingPhoneItem(new Item.Properties().stacksTo(1))
+    );
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
