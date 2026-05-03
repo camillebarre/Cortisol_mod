@@ -76,6 +76,7 @@ public class BlinkCinematic {
 
     private static long currentTransitionDuration = TRANSITION_DURATION;
 
+
     private static void updateCurrentAmount() {
         tickSequence();
 

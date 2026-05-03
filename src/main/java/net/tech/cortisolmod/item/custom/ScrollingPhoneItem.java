@@ -18,16 +18,13 @@ public class ScrollingPhoneItem extends Item {
     public static int battery = 100;
     public static int CORTISOL_SUB_PHONE=1;
     public static final String ANIMATION_TAG = "activated";
-    private int cooldownTicks = 0;
+    public final int COOLDOWN = 20;
     public ScrollingPhoneItem(Properties pProperties) {
         super(pProperties);
     }
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
 
-        if (cooldownTicks>0){
-            return InteractionResultHolder.fail(pPlayer.getItemInHand(pHand));
-        }
 
         ItemStack stack = pPlayer.getItemInHand(pHand);
 
@@ -48,7 +45,9 @@ public class ScrollingPhoneItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity, int pTimeLeft) {
-        cooldownTicks=20;
+        if (pLivingEntity instanceof Player player){
+            player.getCooldowns().addCooldown(this, COOLDOWN);}
+
         pStack.getOrCreateTag().putBoolean(ANIMATION_TAG, false);
     }
 
@@ -75,12 +74,6 @@ public class ScrollingPhoneItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
-        if (battery > 0) {
-            //battery--;
-        }
-        if(cooldownTicks>=0){
-            cooldownTicks--;
-        }
 
         if (!pIsSelected && pStack.hasTag() && pStack.getTag().getBoolean(ANIMATION_TAG)) {
             pStack.getTag().putBoolean(ANIMATION_TAG, false);
