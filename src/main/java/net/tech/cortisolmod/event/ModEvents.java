@@ -206,10 +206,7 @@ public class ModEvents {
             });
         }
     }
-    @SubscribeEvent
-    public static void onPlayerDamage(){
 
-    }
     @SubscribeEvent
     public static void onPlayerEat(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity() instanceof ServerPlayer player) {

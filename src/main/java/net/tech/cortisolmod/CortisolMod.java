@@ -11,6 +11,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.tech.cortisolmod.block.ModBlocks;
+import net.tech.cortisolmod.item.ModCreativeModTabs;
 import net.tech.cortisolmod.item.ModItems;
 import net.tech.cortisolmod.networking.ModMessages;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class CortisolMod
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 
-
+        ModCreativeModTabs.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 

@@ -1,7 +1,9 @@
 {
   "death.attack.cortisol": "%1$s is dead due to CORTISOOOOL damage !",
   "item.cortisolmod.scrolling_phone": "Scrolling Phone",
-
+  "item.cortisolmod.high_cortisol_injector": "High Cortisol Injector",
+  "item.cortisolmod.low_cortisol_injector": "Low Cortisol Injector",
+  "creativetab.cortisol_tab": "Cortisol",
   "tooltip.cortisolmod.cortisol.separator": "",
 
   "item.cortisolmod.cortisol_sword": "Cortisol Sword",

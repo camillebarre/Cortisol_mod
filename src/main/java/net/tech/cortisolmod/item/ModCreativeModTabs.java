@@ -17,6 +17,7 @@ public class ModCreativeModTabs {
             .displayItems((pParameters, pOutput)-> {
                 pOutput.accept(ModItems.SCROLLING_PHONE.get());
                 pOutput.accept(ModItems.CORTISOL_SWORD.get());
+                pOutput.accept(ModItems.HIGH_CORTISOL_INJECTOR.get());
 
             })
             .build());

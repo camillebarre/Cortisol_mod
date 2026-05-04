@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [8, 8],
 	"textures": {
-		"0": "texture-seringue_v2",
-		"particle": "texture-seringue_v2"
+		"0": "cortisolmod:item/high_cortisol_injector",
+		"particle": "cortisolmod:item/high_cortisol_injector"
 	},
 	"elements": [
 		{
@@ -193,19 +193,19 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [-79, 0, 0],
-			"translation": [1.5, 0.5, -6.25]
+			"translation": [1.5, 2.25, -6.25]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [-79, -5, -180],
-			"translation": [0.75, -2.25, 8.75]
+			"translation": [0.75, -0.5, 8.75]
 		},
 		"firstperson_righthand": {
 			"rotation": [-79, 0, 0],
-			"translation": [1.25, 2.75, -5.5]
+			"translation": [1.25, 5, -5.5]
 		},
 		"firstperson_lefthand": {
 			"rotation": [-79, 0, -180],
-			"translation": [-0.75, 1.25, 11]
+			"translation": [-0.75, 2, 11]
 		},
 		"ground": {
 			"rotation": [0, 90, 90],

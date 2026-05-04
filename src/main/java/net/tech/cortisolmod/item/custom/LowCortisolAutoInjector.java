@@ -11,31 +11,33 @@ import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.networking.ModMessages;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
 
-public class HighCortisolAutoInjector extends Item {
+public class LowCortisolAutoInjector extends Item {
 
     private final int cooldown;
     private final float cortisol_amount;
 
 
-    public HighCortisolAutoInjector(Properties pProperties, int cooldown, float cortisol_add) {
+    public LowCortisolAutoInjector(Properties pProperties, int cooldown, float cortisol_add) {
         super(pProperties);
         this.cooldown = cooldown;
-        this.cortisol_amount =cortisol_add;
+        this.cortisol_amount = cortisol_add;
 
     }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
 
         pPlayer.getCooldowns().addCooldown(this, this.cooldown);
+        if (!pLevel.isClientSide()) {
+            pPlayer.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+                cortisol.subCortisol(cortisol_amount);
+                ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), (ServerPlayer) pPlayer);
 
-        pPlayer.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol->{
-            cortisol.addCortisol(cortisol_amount);
-            ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), (ServerPlayer) pPlayer);
-
-        });
-        if (!pPlayer.getAbilities().instabuild) {
-            itemstack.shrink(1);
+            });
+            if (!pPlayer.getAbilities().instabuild) {
+                itemstack.shrink(1);
+            }
         }
 
         return InteractionResultHolder.sidedSuccess(itemstack,pLevel.isClientSide());
