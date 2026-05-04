@@ -40,7 +40,7 @@ public class CortisolHudOverlay {
         int x_bar = 0;
         int y_bar = screenHeight - HUD_BAR_HEIGHT;
 
-        float currentCortisol = (float) ClientCortisolData.getPlayerCortisol();
+        float currentCortisol = ClientCortisolData.getPlayerCortisol();
         float displayCortisol = Math.min(currentCortisol, PlayerCortisol.VISIBLE_MAX_CORTISOL);
 
         float targetAngle = (displayCortisol * ANGLE_DEGREES_PER_CORTISOL) + ANGLE_OFFSET_DEGREES;
@@ -95,4 +95,6 @@ public class CortisolHudOverlay {
             );
         }
     }
+
+
 }

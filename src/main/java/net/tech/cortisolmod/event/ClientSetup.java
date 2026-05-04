@@ -6,6 +6,9 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -56,22 +59,30 @@ public class ClientSetup {
             event.enqueueWork(() -> {
                 ItemProperties.register(
                         ModItems.CORTISOL_SWORD.get(),
-                        new ResourceLocation(CortisolMod.MOD_ID, "cortisol_level"),
+                        new ResourceLocation("cortisolmod", "cortisol_level"),
                         (stack, level, entity, seed) -> {
-                            float cortisol = ClientCortisolData.getPlayerCortisol();
-                            return (float) CortisolSwordItem.getLevel(cortisol);
+
+                            // If it's not a Player
+                            if (!(entity instanceof net.minecraft.world.entity.player.Player player)) {
+                                return 0f;
+                            }
+
+                            float cortisol = ClientCortisolData.getPlayerCortisol(player.getId());
+                            return CortisolSwordItem.getLevel(cortisol);
                         }
                 );
             });
             event.enqueueWork(() -> {
-                ItemProperties.register(ModItems.SCROLLING_PHONE.get(),
+                ItemProperties.register(
+                        ModItems.SCROLLING_PHONE.get(),
                         new ResourceLocation("cortisolmod", ScrollingPhoneItem.ANIMATION_TAG),
                         (stack, level, entity, seed) -> {
                             if (stack.hasTag() && stack.getTag().getBoolean(ScrollingPhoneItem.ANIMATION_TAG)) {
                                 return 1.0F;
                             }
                             return 0.0F;
-                        });
+                        }
+                );
             });
 
         }

@@ -13,10 +13,7 @@ import net.minecraft.world.item.Tiers;
 import java.util.UUID;
 
 public class CortisolSwordItem extends SwordItem {
-
-    public static final String TAG_CORTISOL = "CortisolValue";
-
-    private static final UUID ATTACK_DAMAGE_UUID =
+    public static final UUID ATTACK_DAMAGE_UUID =
             UUID.fromString("a2d7c3f1-91c2-4a2d-9c6e-1d5b8f0a1111");
 
     private static final UUID ATTACK_SPEED_UUID =
@@ -26,9 +23,7 @@ public class CortisolSwordItem extends SwordItem {
         super(Tiers.DIAMOND, 0, -2.4f, properties);
     }
 
-    // =========================
-    // LOGIQUE CORTISOL → DMG
-    // =========================
+    // Cortisol sword damage calculation
     public static float getDamageForCortisol(float cortisol) {
         if (cortisol >= 100f) return 10f;
         if (cortisol >= 80f) return 8f;
@@ -45,9 +40,7 @@ public class CortisolSwordItem extends SwordItem {
         return 0;
     }
 
-    // =========================
-    // ATTRIBUTS DYNAMIQUES
-    // =========================
+    // Dynamics attributes
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
             EquipmentSlot slot,
@@ -57,14 +50,6 @@ public class CortisolSwordItem extends SwordItem {
             return super.getAttributeModifiers(slot, stack);
         }
 
-        float cortisol = 0f;
-
-        if (stack.hasTag()) {
-            cortisol = stack.getTag().getFloat(TAG_CORTISOL);
-        }
-
-        float damage = getDamageForCortisol(cortisol) - 1;
-
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 
         builder.put(
@@ -72,7 +57,7 @@ public class CortisolSwordItem extends SwordItem {
                 new AttributeModifier(
                         ATTACK_DAMAGE_UUID,
                         "Cortisol damage",
-                        damage,
+                        0.0, // Placeholder value
                         AttributeModifier.Operation.ADDITION
                 )
         );

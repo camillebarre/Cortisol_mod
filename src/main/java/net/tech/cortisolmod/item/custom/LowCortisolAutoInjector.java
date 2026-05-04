@@ -32,8 +32,9 @@ public class LowCortisolAutoInjector extends Item {
         if (!pLevel.isClientSide()) {
             pPlayer.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 cortisol.subCortisol(cortisol_amount);
-                ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), (ServerPlayer) pPlayer);
-
+                ModMessages.sendToAllPlayers(
+                        new CortisolSyncS2CPacket(pPlayer.getId(), cortisol.getCortisol())
+                );
             });
             if (!pPlayer.getAbilities().instabuild) {
                 itemstack.shrink(1);

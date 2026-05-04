@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.EnderpearlItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -31,14 +32,14 @@ public class HighCortisolAutoInjector extends Item {
         if (!pLevel.isClientSide()){
             pPlayer.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol->{
                 cortisol.addCortisol(cortisol_amount);
-                ModMessages.sendToPlayer(new CortisolSyncS2CPacket(cortisol.getCortisol()), (ServerPlayer) pPlayer);
-
+                ModMessages.sendToAllPlayers(
+                        new CortisolSyncS2CPacket(pPlayer.getId(), cortisol.getCortisol())
+                );
             });
             if (!pPlayer.getAbilities().instabuild) {
                 itemstack.shrink(1);
             }
         }
-
 
         return InteractionResultHolder.sidedSuccess(itemstack,pLevel.isClientSide());
 

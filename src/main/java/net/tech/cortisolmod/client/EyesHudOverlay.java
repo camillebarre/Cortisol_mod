@@ -50,7 +50,11 @@ public class EyesHudOverlay {
             renderLogo(gg, w, h, BlinkCinematic.getLogoAlpha());
         }
     }
+    public static void blink(long blinkDuration){
+        BlinkCinematic.animateTo(100f,blinkDuration/2);
+        BlinkCinematic.animateTo(0f,blinkDuration/2);
 
+    }
     private static void renderEye(GuiGraphics gg, int w, int h, float blink) {
         float t = blink;
         t = t * t * (3f - 2f * t);
