@@ -6,6 +6,8 @@ public class PlayerCortisol {
     public static final float MIN_CORTISOL = 0f;
     public static final float VISIBLE_MAX_CORTISOL = 100f;
     public static final float REAL_MAX_CORTISOL = 130f;
+    private int lastHitTick = -1;
+
 
     private float cortisol;
 
@@ -28,6 +30,11 @@ public class PlayerCortisol {
     public void copyFrom(PlayerCortisol source) {
         this.cortisol = source.cortisol;
     }
+
+    public int getLastHitTick() { return lastHitTick; }
+
+    public void setLastHitTick(int tick) { lastHitTick = tick; }
+
 
     public void saveNBTData(CompoundTag nbt) {
         nbt.putFloat("cortisol", cortisol);

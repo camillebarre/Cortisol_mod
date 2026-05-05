@@ -60,7 +60,7 @@ public class ModEvents {
     public static final int DAMAGE_START_CORTISOL = 120;
     public static final int DAMAGE_TICK_INTERVAL = 20;
     public static final float DAMAGE_PER_TICK = 2.0f;
-
+    public static final float BASE_CORTISOL = 30.f;
 
     public static final float CREEPER_CORTISOL= 1f;
     public static final double CREEPER_CORTISOL_RADIUS = 7;
@@ -89,7 +89,8 @@ public class ModEvents {
         if (event.isWasDeath()){
             event.getOriginal().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(oldStore -> {
                 event.getEntity().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(newStore -> {
-                    newStore.copyFrom(oldStore);
+
+                    newStore.setCortisol(BASE_CORTISOL);
 
                     if (event.getEntity() instanceof ServerPlayer serverPlayer) {
                         ModMessages.sendToAllPlayers(
@@ -241,9 +242,9 @@ public class ModEvents {
                 }
 
                 //random blinking
-                if (currentCortisol<BLINKING_TREASHOLD&&player.getRandom().nextFloat()<0.01f){
-                    System.out.println((long) (-currentCortisol/0.03+1000));
-                    EyesHudOverlay.blink((long) (-currentCortisol/0.03+1000));
+                if (currentCortisol<BLINKING_TREASHOLD&&player.getRandom().nextFloat()<0.005f){
+
+                    EyesHudOverlay.blink();
                 }
                 //update cortisol
                 ModMessages.sendToAllPlayers(
@@ -274,11 +275,20 @@ public class ModEvents {
         if (event.getEntity() instanceof ServerPlayer player){
             player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
+
+
+
+
                     cortisol.addCortisol(DAMAGE_INCREASE_AMOUNT);
+
+
                     ModMessages.sendToAllPlayers(
                             new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                     );
                 }
+
+
+
             });
         }
         if (event.getSource().getEntity() instanceof ServerPlayer player && event.getEntity() instanceof Monster) {
@@ -288,10 +298,16 @@ public class ModEvents {
 
                 player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                     if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
-                        cortisol.addCortisol(ATTACK_INCREASE_AMOUNT);
-                        ModMessages.sendToAllPlayers(
-                                new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
-                        );
+                        int currentTick = player.tickCount;
+                        if (cortisol.getLastHitTick() != currentTick) {
+
+                            cortisol.addCortisol(ATTACK_INCREASE_AMOUNT);
+
+                            cortisol.setLastHitTick(currentTick);
+                            ModMessages.sendToAllPlayers(
+                                    new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
+                            );
+                        }
                     }
                 });
             }
@@ -302,11 +318,13 @@ public class ModEvents {
     public static void onPlayerBreak(BlockEvent.BreakEvent event){
         event.getPlayer().getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
             if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
-                cortisol.addCortisol(BREAK_INCREASE_AMOUNT);
+                                cortisol.addCortisol(BREAK_INCREASE_AMOUNT);
                 Player player = event.getPlayer();
                 ModMessages.sendToAllPlayers(
                         new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                 );
+
+
             }
         });
     }
@@ -321,6 +339,16 @@ public class ModEvents {
                     );
                 });
             }
+        }
+        if (event.getEntity() instanceof ServerPlayer player) {
+
+            player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+
+                if (cortisol.getCortisol() == 0) {
+
+                    cortisol.setCortisol(BASE_CORTISOL);
+                }
+            });
         }
     }
 
