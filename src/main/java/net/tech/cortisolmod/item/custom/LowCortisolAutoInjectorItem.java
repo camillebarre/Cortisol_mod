@@ -48,15 +48,15 @@ public class LowCortisolAutoInjectorItem extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide && entity instanceof Player player) {
-
             level.playSound(
-                    player,
-                    player.getX(), player.getY(), player.getZ(),
+                    null,
+                    player.blockPosition(),
                     ModSounds.SYRINGE_USE.get(),
                     SoundSource.PLAYERS,
                     1.0f,
                     1.0f
             );
+
             player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 cortisol.subCortisol(this.cortisol_amount,player);
 

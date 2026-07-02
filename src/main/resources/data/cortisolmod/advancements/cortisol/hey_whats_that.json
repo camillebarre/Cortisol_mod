@@ -3,7 +3,7 @@
   "display": {
     "icon": { "item": "cortisolmod:high_cortisol_injector" },
     "title": { "text": "Hey, what's that ?" },
-    "description": { "text": "Reach more than 90 cortisol." },
+    "description": { "text": "Reach more than 100 cortisol." },
     "show_toast": true,
     "announce_to_chat": true
   },

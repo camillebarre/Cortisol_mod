@@ -58,6 +58,7 @@ import net.tech.cortisolmod.util.AdvancementHelper;
 import net.tech.cortisolmod.util.ModDamageTypes;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.lang.Math.min;
 
@@ -94,7 +95,7 @@ public class ModEvents {
     public static final double CREEPER_CORTISOL_RADIUS = 7;
 
     public static final float SPECIAL_MOB_CORTISOL = 1f;
-    public static final double SPECIAL_MOB_CORTISOL_RADIUS = 7;
+    public static final double SPECIAL_MOB_CORTISOL_RADIUS = 5;
 
     public static final int UPDATE_INTERVAL_TICKS = 20;
     public static final int LOW_CORTISOL_SLOWNESS_DURATION = 40;
@@ -147,6 +148,7 @@ public class ModEvents {
             Level level = player.level();
 
             //number of tick for every refresh
+            player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
             if (player.tickCount % UPDATE_INTERVAL_TICKS == 0) {
                 BlockPos playerPos = player.blockPosition();
 
@@ -155,18 +157,19 @@ public class ModEvents {
                         playerPos.offset(5, 2, 5))) {
                     net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
                     if (state.getBlock() instanceof CampfireBlock && state.getValue(CampfireBlock.LIT)) {
-                        player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+
                             if (cortisol.getCortisol() > PlayerCortisol.MIN_CORTISOL) {
                                 cortisol.subCortisol(CAMPFIRE_DECREASE_AMOUNT,player);
+
                                 ModMessages.sendToAllPlayers(
                                         new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                                 );
                             }
-                        });
+
                         break;
                     }
                 }
-                player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+
                     // Special mob cortisol
                     AABB detectionZone = player.getBoundingBox().inflate(SPECIAL_MOB_CORTISOL_RADIUS);
 
@@ -181,15 +184,17 @@ public class ModEvents {
 
                     if (foundCortisolMob) {
                         cortisol.addCortisol(SPECIAL_MOB_CORTISOL,player);
+
                         ModMessages.sendToAllPlayers(
                                 new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                         );
+
                     }
-                });
-            };
+
+            }
 
 
-            player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+
                 float currentCortisol = cortisol.getCortisol();
 
                 //slowness
@@ -206,11 +211,14 @@ public class ModEvents {
 
                 // Grant the 100 cortisol advancement
                 if (currentCortisol >= 100) {
-                    AdvancementHelper.grant(player, "cortisolmod:max_cortisol");
+                    AdvancementHelper.grant(player, "cortisolmod:hey_whats_that");
                 }
 
                 if (player.getVehicle() instanceof Pig){
                     cortisol.subCortisol(PIG_RIDING_CORTISOL, player);
+                    ModMessages.sendToAllPlayers(
+                            new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
+                    );
                 }
                 //damage
                 if (currentCortisol >= DAMAGE_START_CORTISOL) {
@@ -227,10 +235,19 @@ public class ModEvents {
 
                 if(player.fishing!=null&&player.fishing.isInWater()){
                     cortisol.subCortisol(FISHING_CORTISOL,player);
+                    ModMessages.sendToAllPlayers(
+                            new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
+                    );
 
                 }
-                if(player.getInventory().contains(new ItemStack(ModItems.CORTILIUM_INGOT.get()))||player.getInventory().contains(new ItemStack(ModItems.REFINED_CORTILIUM.get()))  ){
+                if( player.getInventory().hasAnyOf(Set.of(
+                        ModItems.CORTILIUM_INGOT.get(),
+                        ModItems.REFINED_CORTILIUM.get())) )
+                {
                     cortisol.addCortisol(CORTISOL_INGOT_INCREASE_AMOUNT,player);
+                    ModMessages.sendToAllPlayers(
+                            new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
+                    );
                 }
 
 
@@ -262,7 +279,12 @@ public class ModEvents {
                 ItemStack held = player.getMainHandItem();
 
                 //cortisol sword update
+
+
                 if (held.getItem() instanceof CortisolSwordItem) {
+
+                    held.getOrCreateTag().putFloat("cortisol", currentCortisol);
+
                     int swordLevel = CortisolSwordItem.getLevel(currentCortisol);
                     int current = held.getOrCreateTag().getInt("cortisol_level");
 
@@ -275,34 +297,6 @@ public class ModEvents {
                     }
                 }
 
-                if (held.getItem() instanceof CortisolSwordItem) {
-                    var attribute = player.getAttribute(Attributes.ATTACK_DAMAGE);
-                    if (! (attribute == null) ) {
-
-                        AttributeModifier modifier = attribute.getModifier(CortisolSwordItem.ATTACK_DAMAGE_UUID);
-                        float damage = CortisolSwordItem.getDamageForCortisol(cortisol.getCortisol());
-
-                        if (modifier == null || modifier.getAmount() != damage) {
-                            attribute.removeModifier(CortisolSwordItem.ATTACK_DAMAGE_UUID);
-                            attribute.addTransientModifier(new AttributeModifier(
-                                    CortisolSwordItem.ATTACK_DAMAGE_UUID,
-                                    "Cortisol damage",
-                                    damage,
-                                    AttributeModifier.Operation.ADDITION
-                            ));
-                        }
-                    }
-                }
-
-                //random blinking
-                if (currentCortisol<BLINKING_TREASHOLD&&player.getRandom().nextFloat()<0.001f){
-
-                    EyesHudOverlay.blink();
-                }
-                //update cortisol
-                ModMessages.sendToAllPlayers(
-                        new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
-                );
 
             });
         }
@@ -333,10 +327,10 @@ public class ModEvents {
 
                     cortisol.addCortisol(DAMAGE_INCREASE_AMOUNT, player);
 
-
                     ModMessages.sendToAllPlayers(
                             new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                     );
+
                 }
 
 
@@ -355,9 +349,11 @@ public class ModEvents {
                             cortisol.addCortisol(ATTACK_INCREASE_AMOUNT, player);
 
                             cortisol.setLastHitTick(currentTick);
+
                             ModMessages.sendToAllPlayers(
                                     new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                             );
+
                         }
                     }
                 });
@@ -376,6 +372,10 @@ public class ModEvents {
                 if (owner instanceof Player player) {
                     player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                         cortisol.addCortisol(WOLF_ON_FIRE_CORTISOL, player);
+
+                        ModMessages.sendToAllPlayers(
+                                new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
+                        );
 
                     });
 
@@ -398,12 +398,16 @@ public class ModEvents {
 
             BlockPos pos =event.getPos();
             LevelAccessor level =event.getLevel();
-            if (level.getBlockState(pos).getBlock() instanceof CropBlock crop && crop.isMaxAge(event.getState())){
+            BlockState state = level.getBlockState(pos);
+
+            if (state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state)) {
                 cortisol.subCortisol(CROP_DECREASE_AMOUNT, event.getPlayer());
 
                 ModMessages.sendToAllPlayers(
                         new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                 );
+
+
             }
             if (pos.equals(playerPos.below())&& !(level.isEmptyBlock(pos.north()) ||
                     level.isEmptyBlock(pos.south()) ||
@@ -434,6 +438,7 @@ public class ModEvents {
         if (event.getEntity() instanceof Player player){
             player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol->{
                 cortisol.addCortisol(BRIDGE_OVER_VOID_CORTISOL,player);
+
                 ModMessages.sendToAllPlayers(
                         new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
                 );
@@ -473,6 +478,13 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+            ModMessages.sendToPlayer(
+                    new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol()),
+                    player
+            );
+        });
 
         CompoundTag persistentData = player.getPersistentData();
         CompoundTag forgeData = persistentData.getCompound(ServerPlayer.PERSISTED_NBT_TAG);

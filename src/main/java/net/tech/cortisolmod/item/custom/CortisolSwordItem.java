@@ -25,7 +25,7 @@ public class CortisolSwordItem extends SwordItem {
 
     // Cortisol sword damage calculation
     public static float getDamageForCortisol(float cortisol) {
-        if (cortisol >= 100f) return 10f;
+        if (cortisol >= 100f) return 10.5f;
         if (cortisol >= 80f) return 8f;
         if (cortisol >= 60f) return 6f;
         if (cortisol >= 30f) return 4f;
@@ -50,6 +50,10 @@ public class CortisolSwordItem extends SwordItem {
             return super.getAttributeModifiers(slot, stack);
         }
 
+        float cortisol = stack.getOrCreateTag().getFloat("cortisol");
+
+        float damage = getDamageForCortisol(cortisol);
+
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 
         builder.put(
@@ -57,7 +61,7 @@ public class CortisolSwordItem extends SwordItem {
                 new AttributeModifier(
                         ATTACK_DAMAGE_UUID,
                         "Cortisol damage",
-                        0.0, // Placeholder value
+                        damage, // Placeholder value
                         AttributeModifier.Operation.ADDITION
                 )
         );

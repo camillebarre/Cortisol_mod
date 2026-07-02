@@ -4,6 +4,7 @@ package net.tech.cortisolmod.item.custom;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,6 +20,7 @@ import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.effect.ModEffects;
 import net.tech.cortisolmod.networking.ModMessages;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
+import net.tech.cortisolmod.util.ModSounds;
 
 import java.util.function.Consumer;
 
@@ -43,6 +45,15 @@ public class CortisolStabilizerSeringe extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide && entity instanceof Player player) {
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    ModSounds.SYRINGE_USE.get(),
+                    SoundSource.PLAYERS,
+                    1.0f,
+                    1.0f
+            );
+
 
             player.addEffect(new MobEffectInstance(ModEffects.CORTISOL_STABILIZER_EFFECT.get(),duration,0,false,true,true));
 
