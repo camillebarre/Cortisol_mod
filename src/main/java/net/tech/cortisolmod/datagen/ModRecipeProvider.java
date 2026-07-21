@@ -48,6 +48,14 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('I', ModItems.CORTILIUM_INGOT.get())
                 .unlockedBy(getHasName(ModItems.CORTILIUM_INGOT.get()),has(ModItems.CORTILIUM_INGOT.get()))
                 .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_CORTISOL_BOW.get())
+                .pattern("I")
+                .pattern("B")
+                .pattern("I")
+                .define('B', Items.BOW)
+                .define('I', ModItems.CORTILIUM_INGOT.get())
+                .unlockedBy(getHasName(ModItems.CORTILIUM_INGOT.get()),has(ModItems.CORTILIUM_INGOT.get()))
+                .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_CORTISOL_INJECTOR.get())
             .pattern("GLG")
             .pattern("GCG")

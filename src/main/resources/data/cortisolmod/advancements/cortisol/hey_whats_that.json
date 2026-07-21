@@ -1,5 +1,5 @@
 {
-  "parent": "cortisolmod:cortisol/i_feel_good",
+  "parent": "cortisolmod:cortisol/low_low",
   "display": {
     "icon": { "item": "cortisolmod:high_cortisol_injector" },
     "title": { "text": "Hey, what's that ?" },

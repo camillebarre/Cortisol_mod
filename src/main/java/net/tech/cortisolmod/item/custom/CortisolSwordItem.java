@@ -25,9 +25,9 @@ public class CortisolSwordItem extends SwordItem {
 
     // Cortisol sword damage calculation
     public static float getDamageForCortisol(float cortisol) {
-        if (cortisol >= 100f) return 10.5f;
-        if (cortisol >= 80f) return 8f;
-        if (cortisol >= 60f) return 6f;
+        if (cortisol >= 80f) return 10.5f;
+        if (cortisol >= 60f) return 8f;
+        if (cortisol >= 45f) return 6f;
         if (cortisol >= 30f) return 4f;
         return 0f;
     }

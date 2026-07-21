@@ -12,6 +12,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.tech.cortisolmod.CortisolMod;
 import net.tech.cortisolmod.client.CortisolTintLayer;
 
+
+@Mod.EventBusSubscriber(
+        modid = CortisolMod.MOD_ID,
+        bus = Mod.EventBusSubscriber.Bus.MOD,
+        value = Dist.CLIENT
+)
 public class ClientEventRender {
 
         @SubscribeEvent

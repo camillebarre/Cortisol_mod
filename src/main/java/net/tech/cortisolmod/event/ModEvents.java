@@ -67,26 +67,27 @@ public class ModEvents {
 
     public static final int CAMPFIRE_DECREASE_AMOUNT = 1;
     public static final int EAT_DECREASE_AMOUNT = 1;
-    public static final int ATTACK_INCREASE_AMOUNT = 1;
-    public static final int DAMAGE_INCREASE_AMOUNT = 1;
+    public static final int ATTACK_INCREASE_AMOUNT = 2;
+    public static final int DAMAGE_INCREASE_AMOUNT = 2;
+    public static final float BREAK_UNDER_INCREASE_AMOUNT = 1f;
     public static final float BREAK_INCREASE_AMOUNT = 1f;
     public static final float CORTISOL_INGOT_INCREASE_AMOUNT = 0.05f;
     public static final float CROP_DECREASE_AMOUNT = 0.5f;
     public static final float PIG_RIDING_CORTISOL = 0.05f;
-    public static final float BRIDGE_OVER_VOID_CORTISOL = 1f;
+    public static final float BRIDGE_OVER_VOID_CORTISOL = 0.7f;
 
 
     public static final float  CORTISOL_EXPLOSION_RADIUS=5;
 
-    public static final int SLOW_THRESHOLD = 10;
+    public static final int SLOW_THRESHOLD = 20;
     public static final int SPEED_CORTISOL_THRESHOLD = 70;
     public static final int DROP_ITEM_CORTISOL_THRESHOLD = 80;
     public static final int BLINKING_TREASHOLD = 20;
     public static final int SHAKING_START_CORTISOL = 100;
     public static final int DEATH_CORTISOL = 130;
-    public static final int DAMAGE_START_CORTISOL = 120;
+    public static final int DAMAGE_START_CORTISOL = 100;
     public static final int DAMAGE_TICK_INTERVAL = 20;
-    public static final float DAMAGE_PER_TICK = 2.0f;
+    public static final float DAMAGE_PER_TICK = 1.0f;
     public static final float BASE_CORTISOL = 30.f;
     public static final float FISHING_CORTISOL = 0.05f;
     public static final float WOLF_ON_FIRE_CORTISOL = 2f;
@@ -166,6 +167,7 @@ public class ModEvents {
                                 );
                             }
 
+                            AdvancementHelper.grant(player, "cortisolmod:cortisol/low_cortisol");
                         break;
                     }
                 }
@@ -336,12 +338,17 @@ public class ModEvents {
 
             });
         }
-        if (event.getSource().getEntity() instanceof ServerPlayer player && event.getEntity() instanceof Monster) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player && (event.getEntity() instanceof Monster  ||event.getEntity() instanceof Player)) {
+            if (event.getEntity() instanceof Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")){
 
+                AdvancementHelper.grant(player, "cortisolmod:cortisol/attack_cortisol_mob");
 
+            }
             if (event.getAmount() > 0) {
 
+
                 player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
+
                     if (cortisol.getCortisol() < PlayerCortisol.REAL_MAX_CORTISOL) {
                         int currentTick = player.tickCount;
                         if (cortisol.getLastHitTick() != currentTick) {
@@ -414,7 +421,7 @@ public class ModEvents {
                     level.isEmptyBlock(pos.east()) ||
                     level.isEmptyBlock(pos.west())) ) {
                 //increase cortisol when mining under your feets
-                cortisol.addCortisol(BREAK_INCREASE_AMOUNT, event.getPlayer());
+                cortisol.addCortisol(BREAK_UNDER_INCREASE_AMOUNT, event.getPlayer());
 
                 ModMessages.sendToAllPlayers(
                         new CortisolSyncS2CPacket(player.getId(), cortisol.getCortisol())
@@ -465,10 +472,18 @@ public class ModEvents {
     }
 
 
+
+
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event){
         if (event.getEntity() instanceof ServerPlayer player && event.getSource().is(ModDamageTypes.CORTISOL)){
             player.level().explode(player,player.getX(),player.getY(),player.getZ(),CORTISOL_EXPLOSION_RADIUS,Level.ExplosionInteraction.TNT);
+
+        }
+        if (event.getEntity() instanceof  Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")){
+
+            AdvancementHelper.grant((ServerPlayer) event.getSource().getEntity(), "cortisolmod:cortisol/get_unstressed");
+
 
         }
     }

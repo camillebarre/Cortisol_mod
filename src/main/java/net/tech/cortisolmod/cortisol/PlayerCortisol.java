@@ -13,7 +13,7 @@ public class PlayerCortisol {
     public static final float VISIBLE_MAX_CORTISOL = 100f;
     public static final float REAL_MAX_CORTISOL = 130f;
     private int lastHitTick = -1;
-    private boolean maxAdvancementGiven = false;
+
 
 
     private float cortisol=30;
@@ -35,9 +35,9 @@ public class PlayerCortisol {
 
 
         setCortisol(cortisol + add);
-        if (!maxAdvancementGiven && this.cortisol >= 100) {
-            maxAdvancementGiven = true;
+        if ( this.cortisol >= 100) {
             AdvancementHelper.grant((ServerPlayer) player, "cortisolmod:cortisol/hey_whats_that");
+
         }
 
     }
@@ -48,7 +48,10 @@ public class PlayerCortisol {
             return;
         }
         setCortisol(cortisol - sub);
+        if ( this.cortisol == 0) {
+            AdvancementHelper.grant((ServerPlayer) player, "cortisolmod:cortisol/low_low");
 
+        }
     }
 
     public void copyFrom(PlayerCortisol source) {

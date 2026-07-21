@@ -2,7 +2,7 @@
   "parent": "cortisolmod:cortisol/hey_whats_that",
   "display": {
     "icon": { "item": "minecraft:wooden_sword" },
-    "title": { "text": "Attack a cortisol mob" },
+    "title": { "text": "Fight back!" },
     "description": { "text": "Hit a cortisol mob once." },
     "show_toast": false,
     "announce_to_chat": false

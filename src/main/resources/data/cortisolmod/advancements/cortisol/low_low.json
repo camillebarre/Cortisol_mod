@@ -1,0 +1,15 @@
+{
+  "parent": "cortisolmod:cortisol/low_cortisol",
+  "display": {
+    "icon": { "item": "minecraft:brown_mushroom" },
+    "title": { "text": "Low low..." },
+    "description": { "text": "Reach 0 cortisol." },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "custom_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
