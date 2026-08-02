@@ -32,6 +32,10 @@ public class PlayerCortisol {
             setCortisol(cortisol + 0.2f*add);
             return;
         }
+        if(player.getAbilities().instabuild ||player.isSpectator())
+        {
+            return;
+        }
 
 
         setCortisol(cortisol + add);

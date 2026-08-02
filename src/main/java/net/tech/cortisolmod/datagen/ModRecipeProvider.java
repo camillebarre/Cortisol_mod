@@ -77,12 +77,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModItems.CORTILIUM.get()),has(ModItems.CORTILIUM.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CORTISOL_STABILIZER_SERINGE.get())
-                .pattern("GCG")
+                .pattern("GDG")
                 .pattern("GCG")
                 .pattern(" I ")
                 .define('G', Items.GLASS)
                 .define('C', ModItems.CORTILIUM_INGOT.get())
                 .define('I', Items.IRON_INGOT)
+                .define('D', Items.DIAMOND)
 
                 .unlockedBy(getHasName(ModItems.CORTILIUM.get()),has(ModItems.CORTILIUM.get()))
                 .save(pWriter);

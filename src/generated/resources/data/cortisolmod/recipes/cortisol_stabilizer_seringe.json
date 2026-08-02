@@ -5,6 +5,9 @@
     "C": {
       "item": "cortisolmod:cortilium_ingot"
     },
+    "D": {
+      "item": "minecraft:diamond"
+    },
     "G": {
       "item": "minecraft:glass"
     },
@@ -13,7 +16,7 @@
     }
   },
   "pattern": [
-    "GCG",
+    "GDG",
     "GCG",
     " I "
   ],

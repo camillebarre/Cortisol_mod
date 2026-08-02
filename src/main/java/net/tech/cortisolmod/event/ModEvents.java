@@ -12,9 +12,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Pig;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,37 +62,43 @@ import static java.lang.Math.min;
 @Mod.EventBusSubscriber(modid = CortisolMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEvents {
 
-    public static final int CAMPFIRE_DECREASE_AMOUNT = 1;
-    public static final int EAT_DECREASE_AMOUNT = 1;
-    public static final int ATTACK_INCREASE_AMOUNT = 2;
-    public static final int DAMAGE_INCREASE_AMOUNT = 2;
-    public static final float BREAK_UNDER_INCREASE_AMOUNT = 1f;
+    // --- LESS CORTISOL  ---
+    public static final int EAT_DECREASE_AMOUNT = 4;
+    public static final int CAMPFIRE_DECREASE_AMOUNT = 4;
+    public static final float CROP_DECREASE_AMOUNT = 1.5f;
+    public static final float PIG_RIDING_CORTISOL = 0.1f;
+    public static final float FISHING_CORTISOL = 0.1f;
+
+    // --- MORE CORTISOL  ---
+    public static final int ATTACK_INCREASE_AMOUNT = 3;
+    public static final int DAMAGE_INCREASE_AMOUNT = 5;
+    public static final float BREAK_UNDER_INCREASE_AMOUNT = 2f;
     public static final float BREAK_INCREASE_AMOUNT = 1f;
-    public static final float CORTISOL_INGOT_INCREASE_AMOUNT = 0.05f;
-    public static final float CROP_DECREASE_AMOUNT = 0.5f;
-    public static final float PIG_RIDING_CORTISOL = 0.05f;
-    public static final float BRIDGE_OVER_VOID_CORTISOL = 0.7f;
+    public static final float CORTISOL_INGOT_INCREASE_AMOUNT = 0.1f;
+    public static final float BRIDGE_OVER_VOID_CORTISOL = 2f;
+    public static final float WOLF_ON_FIRE_CORTISOL = 4f;
 
+    // --- CONFIGURATION ---
+    public static final float CORTISOL_EXPLOSION_RADIUS = 5;
+    public static final float BASE_CORTISOL = 30.f;
 
-    public static final float  CORTISOL_EXPLOSION_RADIUS=5;
-
+    // --- THRESHOLDS ---
     public static final int SLOW_THRESHOLD = 20;
     public static final int SPEED_CORTISOL_THRESHOLD = 70;
     public static final int DROP_ITEM_CORTISOL_THRESHOLD = 80;
     public static final int BLINKING_TREASHOLD = 20;
     public static final int SHAKING_START_CORTISOL = 100;
-    public static final int DEATH_CORTISOL = 130;
     public static final int DAMAGE_START_CORTISOL = 100;
+    public static final int DEATH_CORTISOL = 130;
+
+    // --- STRESS DAMAGE ---
     public static final int DAMAGE_TICK_INTERVAL = 20;
     public static final float DAMAGE_PER_TICK = 1.0f;
-    public static final float BASE_CORTISOL = 30.f;
-    public static final float FISHING_CORTISOL = 0.05f;
-    public static final float WOLF_ON_FIRE_CORTISOL = 2f;
 
-    public static final float CREEPER_CORTISOL= 1f;
+    // --- SPECIAL MOBS ---
+    public static final float CREEPER_CORTISOL = 1f;
     public static final double CREEPER_CORTISOL_RADIUS = 7;
-
-    public static final float SPECIAL_MOB_CORTISOL = 1f;
+    public static final float SPECIAL_MOB_CORTISOL = 2.5f;
     public static final double SPECIAL_MOB_CORTISOL_RADIUS = 5;
 
     public static final int UPDATE_INTERVAL_TICKS = 20;
@@ -243,8 +246,8 @@ public class ModEvents {
 
                 }
                 if( player.getInventory().hasAnyOf(Set.of(
-                        ModItems.CORTILIUM_INGOT.get(),
-                        ModItems.REFINED_CORTILIUM.get())) )
+                        ModItems.CORTILIUM_INGOT.get() )
+                ) )
                 {
                     cortisol.addCortisol(CORTISOL_INGOT_INCREASE_AMOUNT,player);
                     ModMessages.sendToAllPlayers(
@@ -339,6 +342,7 @@ public class ModEvents {
             });
         }
         if (event.getSource().getEntity() instanceof ServerPlayer player && (event.getEntity() instanceof Monster  ||event.getEntity() instanceof Player)) {
+
             if (event.getEntity() instanceof Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")){
 
                 AdvancementHelper.grant(player, "cortisolmod:cortisol/attack_cortisol_mob");
@@ -475,15 +479,22 @@ public class ModEvents {
 
 
     @SubscribeEvent
-    public static void onPlayerDeath(LivingDeathEvent event){
+    public static void onLivingDeath(LivingDeathEvent event){
         if (event.getEntity() instanceof ServerPlayer player && event.getSource().is(ModDamageTypes.CORTISOL)){
             player.level().explode(player,player.getX(),player.getY(),player.getZ(),CORTISOL_EXPLOSION_RADIUS,Level.ExplosionInteraction.TNT);
+            AdvancementHelper.grant(player, "cortisolmod:cortisol/kaboom");
 
         }
-        if (event.getEntity() instanceof  Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")){
+        if (event.getEntity() instanceof  Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")&& event.getSource().getEntity() instanceof Player){
+            ServerPlayer player = (ServerPlayer) event.getSource().getEntity();
 
-            AdvancementHelper.grant((ServerPlayer) event.getSource().getEntity(), "cortisolmod:cortisol/get_unstressed");
+            AdvancementHelper.grant(player, "cortisolmod:cortisol/get_unstressed");
+            ItemStack held = player.getMainHandItem();
 
+            if (held.getItem() instanceof CortisolSwordItem && held.getOrCreateTag().getInt("cortisol_level")==4){
+                AdvancementHelper.grant(player, "cortisolmod:cortisol/kind_of_easy");
+
+            }
 
         }
     }

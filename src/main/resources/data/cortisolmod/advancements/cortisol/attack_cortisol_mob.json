@@ -5,7 +5,7 @@
     "title": { "text": "Fight back!" },
     "description": { "text": "Hit a cortisol mob once." },
     "show_toast": false,
-    "announce_to_chat": false
+    "announce_to_chat": true
   },
   "criteria": {
     "custom_trigger": {
