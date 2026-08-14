@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -20,6 +21,7 @@ import net.tech.cortisolmod.client.EyesHudOverlay;
 import net.tech.cortisolmod.client.cinematic.CinematicConfig;
 import net.tech.cortisolmod.item.ModItems;
 import net.tech.cortisolmod.item.custom.CortisolSwordItem;
+import net.tech.cortisolmod.item.custom.LowCortisolBowItem;
 import net.tech.cortisolmod.item.custom.ScrollingPhoneItem;
 import net.tech.cortisolmod.particle.CortisolParticle;
 import net.tech.cortisolmod.particle.ModParticles;
@@ -59,10 +61,13 @@ public class ClientSetup {
             });
         }
 
+
         @SubscribeEvent
         public static void onClientSetup(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
+
             event.enqueueWork(() -> {
                 ItemProperties.register(
+
                         ModItems.CORTISOL_SWORD.get(),
                         new ResourceLocation("cortisolmod", "cortisol_level"),
                         (stack, level, entity, seed) -> {
@@ -74,6 +79,39 @@ public class ClientSetup {
 
                             float cortisol = ClientCortisolData.getPlayerCortisol(player.getId());
                             return CortisolSwordItem.getLevel(cortisol);
+                        }
+                );
+                ItemProperties.register(
+                        ModItems.LOW_CORTISOL_BOW.get(),
+                        new ResourceLocation("cortisolmod", "cortisol_level"),
+                        (stack, level, entity, seed) -> {
+                            if (!(entity instanceof Player player)) return 0f;
+                            return LowCortisolBowItem.getLevel(ClientCortisolData.getPlayerCortisol(player.getId()));
+                        }
+                );
+
+                ItemProperties.register(
+                        ModItems.LOW_CORTISOL_BOW.get(),
+                        new ResourceLocation("cortisolmod", "cortisol_level"),
+                        (stack, level, entity, seed) -> {
+                            if (!(entity instanceof Player player)) return 0f;
+                            return LowCortisolBowItem.getLevel(ClientCortisolData.getPlayerCortisol(player.getId()));
+                        }
+                );
+                ItemProperties.register(
+                        ModItems.LOW_CORTISOL_BOW.get(),
+                        new ResourceLocation("pulling"),
+                        (stack, level, entity, seed) -> {
+                            return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
+                        }
+                );
+
+                ItemProperties.register(
+                        ModItems.LOW_CORTISOL_BOW.get(),
+                        new ResourceLocation("pull"),
+                        (stack, level, entity, seed) -> {
+                            if (entity == null) return 0.0F;
+                            return entity.getUseItem() != stack ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
                         }
                 );
             });
@@ -94,12 +132,15 @@ public class ClientSetup {
 
 
     }
+    @Mod.EventBusSubscriber(modid = CortisolMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ClientForgeBusEvents {
 
-    @SubscribeEvent
-    public static void onLevelLoad(LevelEvent.Load event) {
-        if (!(event.getLevel() instanceof ClientLevel)) return;
-        loadCortisolShader();
-
-
+        @SubscribeEvent
+        public static void onLevelLoad(LevelEvent.Load event) {
+            if (!(event.getLevel() instanceof ClientLevel)) return;
+            loadCortisolShader();
+        }
     }
+
+
 }

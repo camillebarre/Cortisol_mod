@@ -1,0 +1,26 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "model": "cortisolmod:item/low_cortisol_bow_0"
+  },
+  "overrides": [
+    { "predicate": { "pulling": 1 }, "model": "cortisolmod:item/low_cortisol_bow_0_pulling_0" },
+    { "predicate": { "pulling": 1, "pull": 0.65 }, "model": "cortisolmod:item/low_cortisol_bow_0_pulling_1" },
+    { "predicate": { "pulling": 1, "pull": 0.9 }, "model": "cortisolmod:item/low_cortisol_bow_0_pulling_2" },
+
+    { "predicate": { "cortisolmod:cortisol_level": 1 }, "model": "cortisolmod:item/low_cortisol_bow_1" },
+    { "predicate": { "cortisolmod:cortisol_level": 1, "pulling": 1 }, "model": "cortisolmod:item/low_cortisol_bow_1_pulling_0" },
+    { "predicate": { "cortisolmod:cortisol_level": 1, "pulling": 1, "pull": 0.65 }, "model": "cortisolmod:item/low_cortisol_bow_1_pulling_1" },
+    { "predicate": { "cortisolmod:cortisol_level": 1, "pulling": 1, "pull": 0.9 }, "model": "cortisolmod:item/low_cortisol_bow_1_pulling_2" },
+
+    { "predicate": { "cortisolmod:cortisol_level": 2 }, "model": "cortisolmod:item/low_cortisol_bow_2" },
+    { "predicate": { "cortisolmod:cortisol_level": 2, "pulling": 1 }, "model": "cortisolmod:item/low_cortisol_bow_2_pulling_0" },
+    { "predicate": { "cortisolmod:cortisol_level": 2, "pulling": 1, "pull": 0.65 }, "model": "cortisolmod:item/low_cortisol_bow_2_pulling_1" },
+    { "predicate": { "cortisolmod:cortisol_level": 2, "pulling": 1, "pull": 0.9 }, "model": "cortisolmod:item/low_cortisol_bow_2_pulling_2" },
+
+    { "predicate": { "cortisolmod:cortisol_level": 3 }, "model": "cortisolmod:item/low_cortisol_bow_3" },
+    { "predicate": { "cortisolmod:cortisol_level": 3, "pulling": 1 }, "model": "cortisolmod:item/low_cortisol_bow_3_pulling_0" },
+    { "predicate": { "cortisolmod:cortisol_level": 3, "pulling": 1, "pull": 0.65 }, "model": "cortisolmod:item/low_cortisol_bow_3_pulling_1" },
+    { "predicate": { "cortisolmod:cortisol_level": 3, "pulling": 1, "pull": 0.9 }, "model": "cortisolmod:item/low_cortisol_bow_3_pulling_2" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bow"
+    },
+    "I": {
+      "item": "cortisolmod:cortilium_ingot"
+    }
+  },
+  "pattern": [
+    "I",
+    "B",
+    "I"
+  ],
+  "result": {
+    "item": "cortisolmod:low_cortisol_bow"
+  },
+  "show_notification": true
+}

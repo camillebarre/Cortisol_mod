@@ -1,5 +1,5 @@
 {
-  "cortisolmod.syringe_use": {
+  "syringe_use": {
     "sounds": [
       "cortisolmod:syringe_use"
     ]

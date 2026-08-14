@@ -12,7 +12,7 @@
       "item": "minecraft:iron_ingot"
     },
     "L": {
-      "tag": "minecraft:leaves"
+      "item": "minecraft:grass"
     }
   },
   "pattern": [

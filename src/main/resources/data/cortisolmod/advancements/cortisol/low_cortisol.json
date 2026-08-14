@@ -1,9 +1,9 @@
 {
   "parent": "cortisolmod:cortisol/a_new_day_begin",
   "display": {
-    "icon": { "item": "minecraft:brown_mushroom" },
-    "title": { "text": "I feeel gooood" },
-    "description": { "text": "Reach 0 cortisol." },
+    "icon": { "item": "minecraft:campfire" },
+    "title": { "text": "Low cortisol" },
+    "description": { "text": "Reduce your cortisol by standing near a campfire" },
     "show_toast": true,
     "announce_to_chat": true
   },

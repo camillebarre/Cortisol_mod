@@ -17,7 +17,7 @@ import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
 
 public class ScrollingPhoneItem extends Item {
     public static int battery = 100;
-    public static int CORTISOL_SUB_PHONE=1;
+    public static int CORTISOL_SUB_PHONE=5;
     public static final String ANIMATION_TAG = "activated";
     public final int COOLDOWN = 20;
     public ScrollingPhoneItem(Properties pProperties) {

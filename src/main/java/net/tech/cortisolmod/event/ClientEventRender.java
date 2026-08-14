@@ -12,6 +12,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.tech.cortisolmod.CortisolMod;
 import net.tech.cortisolmod.client.CortisolTintLayer;
 
+
+@Mod.EventBusSubscriber(
+        modid = CortisolMod.MOD_ID,
+        bus = Mod.EventBusSubscriber.Bus.MOD,
+        value = Dist.CLIENT
+)
 public class ClientEventRender {
 
         @SubscribeEvent
@@ -24,7 +30,7 @@ public class ClientEventRender {
                 tryAddLayer(event, entityType);
             });
         }
-        @SuppressWarnings("unchecked")
+
         private static <T extends net.minecraft.world.entity.LivingEntity,
                 M extends net.minecraft.client.model.EntityModel<T>>
         void tryAddLayer(EntityRenderersEvent.AddLayers event, EntityType<?> type) {

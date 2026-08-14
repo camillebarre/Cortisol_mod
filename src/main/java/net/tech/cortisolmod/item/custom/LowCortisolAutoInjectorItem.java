@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +21,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.tech.cortisolmod.cortisol.PlayerCortisolProvider;
 import net.tech.cortisolmod.networking.ModMessages;
 import net.tech.cortisolmod.networking.packet.CortisolSyncS2CPacket;
+import net.tech.cortisolmod.util.AdvancementHelper;
 import net.tech.cortisolmod.util.ModSounds;
 
 import java.util.function.Consumer;
@@ -48,15 +50,17 @@ public class LowCortisolAutoInjectorItem extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide && entity instanceof Player player) {
-
             level.playSound(
-                    player,
-                    player.getX(), player.getY(), player.getZ(),
+                    null,
+                    player.blockPosition(),
                     ModSounds.SYRINGE_USE.get(),
                     SoundSource.PLAYERS,
                     1.0f,
                     1.0f
             );
+            AdvancementHelper.grant((ServerPlayer) player, "cortisolmod:cortisol/i_love_drugs");
+
+
             player.getCapability(PlayerCortisolProvider.PLAYER_CORTISOL).ifPresent(cortisol -> {
                 cortisol.subCortisol(this.cortisol_amount,player);
 

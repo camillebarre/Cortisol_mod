@@ -22,11 +22,10 @@ public class ModItems {
             () -> new CortisolSwordItem(new Item.Properties().durability(2500))
     );
     public static final RegistryObject<Item> SCROLLING_PHONE=ITEMS.register("scrolling_phone",()->new ScrollingPhoneItem(new Item.Properties().stacksTo(1).durability(2500)));
-    public static final RegistryObject<Item> HIGH_CORTISOL_INJECTOR=ITEMS.register("high_cortisol_injector",()->new HighCortisolAutoInjectorItem(new Item.Properties().stacksTo(16), 60 ,15));
-    public static final RegistryObject<Item> LOW_CORTISOL_INJECTOR=ITEMS.register("low_cortisol_injector",()->new LowCortisolAutoInjectorItem(new Item.Properties().stacksTo(16), 60 ,15));
+    public static final RegistryObject<Item> HIGH_CORTISOL_INJECTOR=ITEMS.register("high_cortisol_injector",()->new HighCortisolAutoInjectorItem(new Item.Properties().stacksTo(16), 60 ,30));
+    public static final RegistryObject<Item> LOW_CORTISOL_INJECTOR=ITEMS.register("low_cortisol_injector",()->new LowCortisolAutoInjectorItem(new Item.Properties().stacksTo(16), 60 ,30));
     public static final RegistryObject<Item> CORTILIUM=ITEMS.register("cortilium",()->new CortiliumItem(new Item.Properties()));
     public static final RegistryObject<Item> CORTILIUM_INGOT=ITEMS.register("cortilium_ingot",()->new CortiliumItem(new Item.Properties()));
-    public static final RegistryObject<Item> REFINED_CORTILIUM=ITEMS.register("refined_cortilium",()->new CortiliumItem(new Item.Properties()));
     public static final RegistryObject<Item> CORTISOL_STABILIZER_SERINGE=ITEMS.register("cortisol_stabilizer_seringe",()->new CortisolStabilizerSeringe(new Item.Properties(), 20,120*20));
     public static final RegistryObject<Item> LOW_CORTISOL_BOW=ITEMS.register("low_cortisol_bow",
             ()->new LowCortisolBowItem(new Item.Properties().stacksTo(1).durability(500))

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "cortisolmod:item/low_cortisol_bow_2_pulling_0"
+  }
+}

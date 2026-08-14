@@ -1,5 +1,5 @@
 {
-  "parent": "cortisolmod:cortisol/i_feel_good",
+  "parent": "cortisolmod:cortisol/now_im_relaxed",
   "display": {
     "icon": { "item": "minecraft:wither_skeleton_skull" },
     "title": { "text": "GL HF" },

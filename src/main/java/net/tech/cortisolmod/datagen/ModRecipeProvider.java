@@ -48,6 +48,14 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('I', ModItems.CORTILIUM_INGOT.get())
                 .unlockedBy(getHasName(ModItems.CORTILIUM_INGOT.get()),has(ModItems.CORTILIUM_INGOT.get()))
                 .save(pWriter);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_CORTISOL_BOW.get())
+                .pattern("I")
+                .pattern("B")
+                .pattern("I")
+                .define('B', Items.BOW)
+                .define('I', ModItems.CORTILIUM_INGOT.get())
+                .unlockedBy(getHasName(ModItems.CORTILIUM_INGOT.get()),has(ModItems.CORTILIUM_INGOT.get()))
+                .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LOW_CORTISOL_INJECTOR.get())
             .pattern("GLG")
             .pattern("GCG")
@@ -69,12 +77,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModItems.CORTILIUM.get()),has(ModItems.CORTILIUM.get()))
                 .save(pWriter);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CORTISOL_STABILIZER_SERINGE.get())
-                .pattern("GCG")
+                .pattern("GDG")
                 .pattern("GCG")
                 .pattern(" I ")
                 .define('G', Items.GLASS)
                 .define('C', ModItems.CORTILIUM_INGOT.get())
                 .define('I', Items.IRON_INGOT)
+                .define('D', Items.DIAMOND)
 
                 .unlockedBy(getHasName(ModItems.CORTILIUM.get()),has(ModItems.CORTILIUM.get()))
                 .save(pWriter);

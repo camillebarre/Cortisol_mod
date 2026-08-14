@@ -37,13 +37,13 @@ public class CortisolMobEvents {
     private static final UUID HEALTH_UUID = UUID.fromString("33333333-3333-3333-3333-333333333333");
 
     // 0.5 to x1.5, 1 to x2, etx...
-    private static final float SPEED_MODIFIER = 0.5f;
-    private static final float DAMAGE_MODIFIER = 2f;
+    private static final float SPEED_MODIFIER = 0.7f;
+    private static final float DAMAGE_MODIFIER = 2.5f;
     private static final float HEALTH_MODIFIER = 2f;
 
     // 1% chance (it's actually a lot, no ???)
     //private static final double CHANCE = 0.01;
-    private static final double CHANCE = 0.5;
+    private static final double CHANCE = 0.05;
 
 
     @SubscribeEvent
@@ -57,7 +57,7 @@ public class CortisolMobEvents {
         // Check if cortisol tag already exist
         CompoundTag tag = mob.getPersistentData();
         if (tag.getBoolean(TAG_CORTISOL)) return;
-        //span in cortisol biome
+        //spawn in cortisol biome
 
         if (event.getLevel().getBiome(mob.blockPosition()).is(ModBiomes.CORTISOL_BIOME)){
             applyCortisol(mob);

@@ -1,5 +1,5 @@
 {
-  "parent": "cortisolmod:cortisol/attack_cortisol_mob",
+  "parent": "cortisolmod:cortisol/hey_whats_that",
   "display": {
     "icon": { "item": "minecraft:tnt" },
     "title": { "text": "Kaboooom" },
