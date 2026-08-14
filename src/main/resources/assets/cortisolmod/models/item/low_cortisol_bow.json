@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "model": "cortisolmod:item/low_cortisol_bow_0"
+    "layer0": "cortisolmod:item/low_cortisol_bow_0"
   },
   "overrides": [
     { "predicate": { "pulling": 1 }, "model": "cortisolmod:item/low_cortisol_bow_0_pulling_0" },
