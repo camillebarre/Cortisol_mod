@@ -1,15 +1,19 @@
 package net.tech.cortisolmod.event;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +24,8 @@ import net.tech.cortisolmod.networking.packet.CortisolMobSyncS2CPacket;
 import net.tech.cortisolmod.particle.ModParticles;
 import net.tech.cortisolmod.util.AdvancementHelper;
 import net.tech.cortisolmod.worldgen.biome.ModBiomes;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Random;
 import java.util.Objects;
@@ -41,10 +47,36 @@ public class CortisolMobEvents {
     private static final float DAMAGE_MODIFIER = 2.5f;
     private static final float HEALTH_MODIFIER = 2f;
 
-    // 1% chance (it's actually a lot, no ???)
-    //private static final double CHANCE = 0.01;
     private static final double CHANCE = 0.05;
+    private static final double WITHER_CHANCE = 0.2;
 
+    // Special event for the wither
+    @SubscribeEvent
+    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide) return;
+        if (!(event.getEntity() instanceof WitherBoss wither)) return;
+
+        // Check if cortisol tag already exist
+        CompoundTag tag = wither.getPersistentData();
+        if (tag.getBoolean(TAG_CORTISOL)) return;
+
+        if (wither.getRandom().nextDouble() > WITHER_CHANCE) {
+            tag.putBoolean(TAG_CORTISOL, false);
+            return;
+        }
+        Player closestPlayer = wither.level().getNearestPlayer(
+                TargetingConditions.forNonCombat().range(50.0),
+                wither
+        );
+        if (closestPlayer != null){
+            AdvancementHelper.grant((ServerPlayer) closestPlayer, "cortisolmod:cortisol/gl_hf");
+        }
+        wither.setCustomName(
+                Component.literal("Cortisol Wither")
+                        .withStyle(ChatFormatting.RED)
+        );
+        applyCortisol(wither);
+    }
 
     @SubscribeEvent
     public static void onFinalizeSpawn(MobSpawnEvent.FinalizeSpawn event) {
@@ -57,8 +89,8 @@ public class CortisolMobEvents {
         // Check if cortisol tag already exist
         CompoundTag tag = mob.getPersistentData();
         if (tag.getBoolean(TAG_CORTISOL)) return;
-        //spawn in cortisol biome
 
+        //spawn in cortisol biome
         if (event.getLevel().getBiome(mob.blockPosition()).is(ModBiomes.CORTISOL_BIOME)){
             applyCortisol(mob);
             return;
@@ -68,7 +100,7 @@ public class CortisolMobEvents {
         if (mob.getRandom().nextDouble() > CHANCE) {
             tag.putBoolean(TAG_CORTISOL, false);
             return;
-        };
+        }
         applyCortisol(mob);
     }
 

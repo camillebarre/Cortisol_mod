@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -481,19 +482,31 @@ public class ModEvents {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event){
         if (event.getEntity() instanceof ServerPlayer player && event.getSource().is(ModDamageTypes.CORTISOL)){
+            player.getPersistentData().putBoolean("cortisol_explosion", true);
+
             player.level().explode(player,player.getX(),player.getY(),player.getZ(),CORTISOL_EXPLOSION_RADIUS,Level.ExplosionInteraction.TNT);
             AdvancementHelper.grant(player, "cortisolmod:cortisol/kaboom");
+
+            player.getPersistentData().remove("cortisol_explosion");
+        }
+        if (event.getEntity() instanceof EnderDragon){
+            if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+            if (!player.getPersistentData().getBoolean("cortisol_explosion")) return;
+            AdvancementHelper.grant(
+                    player,
+                    "cortisolmod:cortisol/kamikaze_god"
+            );
 
         }
         if (event.getEntity() instanceof  Monster mob && mob.getPersistentData().getBoolean("cortisol_mob")&& event.getSource().getEntity() instanceof Player){
             ServerPlayer player = (ServerPlayer) event.getSource().getEntity();
 
             AdvancementHelper.grant(player, "cortisolmod:cortisol/get_unstressed");
+            AdvancementHelper.increment(player, "cortisolmod:cortisol/now_im_relaxed");
             ItemStack held = player.getMainHandItem();
 
             if (held.getItem() instanceof CortisolSwordItem && held.getOrCreateTag().getInt("cortisol_level")==4){
                 AdvancementHelper.grant(player, "cortisolmod:cortisol/kind_of_easy");
-
             }
 
         }
