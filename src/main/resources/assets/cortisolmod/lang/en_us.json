@@ -1,5 +1,6 @@
 {
   "death.attack.cortisol": "%1$s is dead due to CORTISOOOOL damage !",
+  "death.attack.cortisol.player": "%1$s was to stressed fighting %2$s !",
   "item.cortisolmod.scrolling_phone": "Scrolling Phone",
   "item.cortisolmod.high_cortisol_injector": "High Cortisol Injector",
   "item.cortisolmod.low_cortisol_injector": "Low Cortisol Injector",

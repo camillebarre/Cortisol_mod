@@ -28,14 +28,15 @@ public class PlayerCortisol {
     }
 
     public void addCortisol(float add, Player player) {
-        if (player.hasEffect(ModEffects.CORTISOL_STABILIZER_EFFECT.get())) {
-            setCortisol(cortisol + 0.2f*add);
-            return;
-        }
         if(player.getAbilities().instabuild ||player.isSpectator())
         {
             return;
         }
+        if (player.hasEffect(ModEffects.CORTISOL_STABILIZER_EFFECT.get())) {
+            setCortisol(cortisol + 0.2f*add);
+            return;
+        }
+
 
 
         setCortisol(cortisol + add);
@@ -47,6 +48,10 @@ public class PlayerCortisol {
     }
 
     public void subCortisol(float sub, Player player) {
+        if(player.getAbilities().instabuild ||player.isSpectator())
+        {
+            return;
+        }
         if (player.hasEffect(ModEffects.CORTISOL_STABILIZER_EFFECT.get())) {
             setCortisol(cortisol - 0.2f*sub);
             return;
